@@ -1,0 +1,203 @@
+//scr_death
+if (global.checkpointR != 0)
+{
+    room_goto(global.checkpointR);   
+}
+else
+{
+    room_restart();
+}
+
+
+//obj_player create event
+hsp = 0;
+hsp_carry = 0;
+vsp = 0;
+grv = 0.3;
+walksp = 4;
+jumps = 0;
+jumpsmax = 5;
+
+jumpspeed_normal = 7;
+jumpspeed_power = 10;
+jumpspeed = jumpspeed_normal;
+
+if (global.checkpointR == room)
+{
+    x = global.checkpointx;
+    y = global.checkpointy;
+}
+
+key_down = 0;
+
+
+
+//obj_player Alarm 0
+jumpspeed = jumpspeed_normal;
+sprite_index = spr_player;
+
+
+
+//obj_player Step
+//Step Event
+//Player Input
+key_left = keyboard_check(vk_left);
+key_right = keyboard_check(vk_right);
+key_jump = keyboard_check_pressed(vk_space);
+key_jump_held = keyboard_check(vk_space);
+key_down = keyboard_check_pressed(vk_down);
+
+//Calculate Movement
+var move = key_right - key_left;
+
+hsp = move * walksp;
+
+if (vsp < 10) vsp += grv;
+
+if (place_meeting(x, y+1, obj_wall))
+{
+    jumps = jumpsmax;
+}
+
+if (key_jump) && (jumps > 0 )
+{
+    jumps -= 1;
+    vsp  = -jumpspeed;
+}
+
+if (key_jump) && (place_meeting(x+1, y, obj_wall) || place_meeting(x-1, y, obj_wall))
+{
+    vsp = -jumpspeed;
+}
+//If you want to have variable jump height
+//if (vsp < 0) && (!key_jump_held) vsp = max(vsp, 0);
+
+var hsp_final = hsp + hsp_carry;
+hsp_carry = 0;
+
+//Horizontal Collisions
+if (place_meeting(x+hsp_final,y,obj_wall))
+{
+    while (!place_meeting(x+sign(hsp_final),y,obj_wall))
+    {
+        x = x + sign(hsp_final);
+    }
+    hsp_final = 0;
+    hsp = 0;
+}
+
+x = x + hsp_final;
+
+
+//Vertical Collisions
+if (place_meeting(x,y+vsp,obj_wall))
+{
+    while (!place_meeting(x,y+sign(vsp),obj_wall))
+    {
+        y = y + sign(vsp);
+    }
+    vsp = 0;
+}
+
+y = y + vsp;
+
+//Animation
+  
+    if (hsp == 0) 
+    {
+        sprite_index = spr_player;
+    }
+    else
+    {
+        sprite_index = spr_player_run;
+        image_speed = 0.5;
+    }
+
+if (hsp != 0)
+{
+image_xscale = sign(hsp)
+}
+
+
+
+
+//obj_player Draw GUI
+draw_text(10, 10, hsp);
+draw_text(15, 15, vsp);
+
+
+
+//obj_wall No code added
+
+
+
+//obj_camera Step Event
+//obj_camera
+x += (obj_player.x - x)/20;
+y += (obj_player.y - y)/20;
+
+view_xview = -(view_wview/2) + x;
+view_yview = -(view_hview/2) + y;
+
+
+view_xview = clamp(view_xview, 0, room_width-view_wview);
+view_yview = clamp(view_yview, 0, room_height-view_hview);
+
+
+
+//obj_enemy Create Event
+dir = -1;
+movespeed = 3;
+grav = 0.2;
+hsp = 0;
+vsp = 0;
+fear = 0;
+
+
+
+//obj_enemy Step Event
+hsp = dir * movespeed;
+vsp += grav;
+
+//Horizontal Collisions
+if (place_meeting(x+hsp,y,obj_wall))
+{
+    while (!place_meeting(x+sign(hsp),y,obj_wall))
+    {
+        x = x + sign(hsp);
+    }
+    hsp = 0;
+    dir *= -1;
+}
+
+x = x + hsp;
+
+//Vertical Collisions
+if (place_meeting(x,y+vsp,obj_wall))
+{
+    while (!place_meeting(x,y+sign(vsp),obj_wall))
+    {
+        y = y + sign(vsp);
+    }
+    vsp = 0;
+    if (fear) && !position_meeting(x+(sprite_width/2)*dir, y+(sprite_height/2)+8, obj_wall)
+    {
+        dir *= -1;
+    }
+}
+
+y = y + vsp;
+
+//Enemy Collision
+if (place_meeting(x, y, obj_player))
+{
+    if (obj_player.y < y - 11)
+    {
+        with (obj_player) vsp = -jumpspeed;
+        instance_destroy();
+    }
+    else
+    {
+        scr_death();
+    }
+}
