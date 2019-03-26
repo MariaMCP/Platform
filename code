@@ -201,3 +201,62 @@ if (place_meeting(x, y, obj_player))
         scr_death();
     }
 }
+
+
+
+//obj_checkpoint Create Event
+//Create Event
+image_speed = 0;
+image_index = 0;
+
+
+
+//obj_checkpoint Step Event
+image_angle += 1;
+
+if (place_meeting(x,y,obj_player))
+{
+    global.check_point = id;
+    global.checkpointx = x;
+    global.checkpointy = y;
+    global.checkpointR = room;
+}
+
+if (global.checkpointR == room)
+{
+    if (global.check_point == id) image_index = 1; else image_index = 0;
+}
+
+
+
+//obj_portal Collision with obj_player
+//Collisions with player
+room_goto_next();
+
+
+
+//obj_enemy_fear Create Event
+//Drag and Drop Call Event to call the inherited event (Make sure parent is obj_enemy)
+
+//in code box
+fear = 1;
+
+
+
+//obj_platform Create Event (Make sure parent is obj_wall)
+sprite_index = -1;
+
+
+
+//obj_platform Step Event
+if (instance_exists(obj_player))
+{
+    if (round(obj_player.y + obj_player.sprite_height) > y) || (obj_player.key_down) mask_index = -1;
+    else mask_index = platform;
+}
+
+
+
+//obj_platform Draw Event
+//Draw Event (draws the platform sprite)
+draw_sprite(platform, 0, x, y);
