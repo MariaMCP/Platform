@@ -1,6 +1,6 @@
 //Creation Code in first room rm_initialize
 //Blank room with nothing in it
-global.checkpoint = noone;
+global.check_point = noone;
 global.checkpointR = 0;
 global.checkpointx = 0;
 global.checkpointy = 0;
