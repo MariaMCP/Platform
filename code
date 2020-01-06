@@ -52,11 +52,11 @@ sprite_index = spr_player;
 //obj_player Step
 //Step Event
 //Player Input
-key_left = keyboard_check(vk_left); //keyboard_check(ord('A'))
-key_right = keyboard_check(vk_right); //keyboard_check(ord('D'))
-key_jump = keyboard_check_pressed(vk_space); //keyboard_check_pressed(ord('W'))
-key_jump_held = keyboard_check(vk_space); //keyboard_check(ord('W'))
-key_down = keyboard_check_pressed(vk_down); //keyboard_check_pressed(ord('S'))
+key_left = keyboard_check(vk_left) || keyboard_check(ord('A')) || keyboard_check(ord('J'))
+key_right = keyboard_check(vk_right) || keyboard_check(ord('D')) || keyboard_check(ord('L'))
+key_jump = keyboard_check_pressed(vk_space) || keyboard_check_pressed(ord('W')) || keyboard_check_pressed(vk_up) || keyboard_check_pressed(ord('I'));
+key_jump_held = keyboard_check(vk_space) || keyboard_check(ord('W')) || keyboard_check(vk_up) || keyboard_check(ord('I'));
+key_down = keyboard_check_pressed(vk_down) || keyboard_check_pressed(ord('S')) || keyboard_check_pressed(ord('K'))
 
 //Calculate Movement
 var move = key_right - key_left;
